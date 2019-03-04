@@ -1,0 +1,95 @@
+<template>
+    <view class="wrap">
+        <image src="{{val.imgUrl}}" mode="scaleToFill" lazy-load="false"/>
+        <view>{{val.nm}}</view>
+        <view style="color:red;font-size:35rpx;">￥{{val.peo}}</view>
+        <view class="foot">
+            <view style="font-size:30rpx;marginn-right:20rpx;">联系客服</view>
+            <view style="font-size:30rpx;marginn-right:20rpx;">进店</view>
+            <view style="font-size:30rpx;marginn-right:20rpx;">购物车
+                <text style="color:red">({{count}})</text>
+            </view>
+            <view class="addcar" @tap="addCar">加入购物车</view>
+            <view class="buy" @tap="buy">立即购买</view>
+        </view>
+    </view>
+</template>
+<script>
+import wepy from 'wepy';
+import { connect } from 'wepy-redux';
+import { add } from '../store/actions/counter';
+@connect(
+  {
+      list:(state)=>{
+          return state.counter;
+      }
+  },
+  {
+    add
+  }
+)
+export default class Detail extends wepy.page {
+  config = {
+    navigationBarTitleText: '商品详情'
+  };
+  data = {
+    val: {},
+    count: 0
+  };
+  onLoad(options) {
+    this.val = JSON.parse(options.val);
+     let count=0;
+      this.list.map((item)=>{
+          count+=item.num;
+      })
+      this.count=count;
+  }
+  methods = {
+    addCar() {
+      this.methods.add(this.val);
+      let count=0;
+      this.list.map((item)=>{
+          count+=item.num;
+      })
+      this.count=count;
+    },
+    buy(){
+        wx.navigateTo({
+        url: './shopcar'
+      })
+    }
+  };
+}
+</script>
+<style lang="less" scoped>
+.wrap {
+  padding: 0 20rpx;
+}
+.foot {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  height: 100rpx;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  align-items: center;
+  border-top: solid 1rpx #ccc;
+  .addcar {
+    height: 100%;
+    color: #fff;
+    background: #fe9404;
+    padding: 0 20rpx;
+    line-height: 100rpx;
+  }
+  .buy {
+    height: 100%;
+    color: #fff;
+    background: #ed3a40;
+    padding: 0 20rpx;
+    line-height: 100rpx;
+  }
+}
+</style>
+
+

@@ -1,0 +1,132 @@
+<template>
+  <view class="wrap">
+    <repeat for="{{list}}" key="index" index="index" item="item">
+      <view class="item">
+        <checkbox name="id" checked="{{item.ck}}" @tap="ckpro({{item}})"/>
+        <image src="{{item.imgUrl}}" mode="scaleToFill" lazy-load="false"/>
+        <view style="flex:1;">
+          <view>{{item.nm}}</view>
+          <view>
+            <text style="color:red">￥{{item.peo}}</text>
+            <view class="js">
+              <button @tap="minuspro({{item}})">-</button>
+              <text>{{item.num}}</text>
+              <button @tap="addpro({{item}})">+</button>
+            </view>
+          </view>
+        </view>
+      </view>
+    </repeat>
+    <view class="foot">
+      <view>
+        <label for="id">
+          <checkbox name="id" checked="{{item.all}}" @tap="allpro"/>全选
+        </label>
+      </view>
+      <view style="margin:0 30rpx;">总价：{{money}}</view>
+      <view style="color:#fff;background:red;height:100%;padding:0 20rpx;line-height:100rpx;">立即购买</view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+import { connect } from 'wepy-redux';
+import { pro, ck, ckall } from '../store/actions/counter';
+@connect(
+  {
+    list: state => {
+      return state.counter;
+    }
+  },
+  {
+    pro,
+    ck,
+    ckall
+  }
+)
+export default class Shopcar extends wepy.page {
+  config = {
+    navigationBarTitleText: '购物车'
+  };
+  data = {
+    money: 0,
+    allck: false
+  };
+  methods = {
+    minuspro(val) {
+      this.methods.pro(val, false);
+      let m = 0;
+      this.list.map(item => {
+        if (item.ck) {
+          m += item.num * item.peo;
+        }
+      });
+      this.money = m;
+    },
+    addpro(val) {
+      this.methods.pro(val, true);
+      let m = 0;
+      this.list.map(item => {
+        if (item.ck) {
+          m += item.num * item.peo;
+        }
+      });
+      this.money = m;
+    },
+    ckpro(val) {
+      this.methods.ck(val);
+      let m = 0;
+      this.list.map(item => {
+        if (item.ck) {
+          m += item.num * item.peo;
+        }
+      });
+      this.money = m;
+    },
+    allpro() {
+      this.allck = !this.allck;
+      this.methods.ckall(this.allck);
+      let m = 0;
+      this.list.map(item => {
+        if (item.ck) {
+          m += item.num * item.peo;
+        }
+      });
+      this.money = m;
+    }
+  };
+}
+</script>
+<style lang="less" scoped>
+.item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20rpx;
+  image {
+    width: 250rpx;
+    height: 250rpx;
+  }
+  .js {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 50rpx;
+    button {
+      height: 60rpx;
+      line-height: 60rpx;
+    }
+  }
+}
+.foot {
+  width: 100%;
+  height: 100rpx;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+</style>
+
+
